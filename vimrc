@@ -45,10 +45,14 @@ call vundle#begin()
     Plugin 'tpope/vim-commentary'               " Comment stuff out
     Plugin 'Valloric/YouCompleteMe'             " Autocomplete plugin
 
+    Plugin 'dense-analysis/ale'
+    "Plugin 'vim-syntastic/syntastic'
+    
     "-------------------=== Python  ===-----------------------------
-    Plugin 'w0rp/ale'
-    Plugin 'klen/python-mode'                   " Python mode (docs, refactor, lints...)
-    "Plugin 'scrooloose/syntastic'               " Syntax checking plugin for Vim
+    Plugin 'python-mode/python-mode'
+    "Plugin 'xavierd/clang_complete'
+""    Plugin 'Raimondi/delimitMate'
+"    Plugin 'rust-lang/rust.vim' "rust
 
 call vundle#end()                           " requiredi
 set runtimepath^=~/.vim/bundle/ctrlp.vim
@@ -65,12 +69,12 @@ let mapleader = ","
 syntax enable                               " syntax highlight
 
 set t_Co=256                                " set 256 colors
-colorscheme stonewashed-dark-256                    " set color scheme
+colorscheme wombat256                    " set color scheme
 
 set number                                  " show line numbers
 set ruler
 set ttyfast                                 " terminal acceleration
-
+"set mouse=a
 set tabstop=4                               " 4 whitespaces for tabs visual presentation
 set shiftwidth=4                            " shift lines by 4 spaces
 set smarttab                                " set tabs for a shifttabs logic
@@ -185,16 +189,21 @@ let g:airline_powerline_fonts=1
 "=====================================================
 "" TagBar settings
 "=====================================================
-nmap <F2> :TagbarToggle<CR>
+nmap <F6> :TagbarToggle<CR>
+
 let g:tagbar_autofocus=0
 ""设置tagbar使用的ctags的插件,必须要设置对  
 let g:tagbar_ctags_bin='/usr/bin/ctags'  
 "设置tagbar的窗口宽度  
 let g:tagbar_width=25
-let g:tagbar_left=1
-autocmd BufEnter *.py :call tagbar#autoopen(0)
-autocmd BufWinLeave *.py :TagbarClose
-:set tags+=/home/zyy/.vim/systags,./tags;
+let g:tagbar_right=1
+"let g:tagbar_autoclose=1
+
+"autocmd BufEnter *.py :call tagbar#autoopen(0)
+"autocmd BufWinLeave *.py :TagbarClose
+
+
+set tags+=~/.vim/systags,~/.vim/c++tags,./tags
 
 """
 "ctags配置热键自动更新
@@ -282,34 +291,18 @@ let g:NERDTreeWinPos='right'
 let g:NERDTreeShowLineNumbers=1
 ""不显示隐藏文件
 let g:NERDTreeHidden=0
-"=====================================================
-"" SnipMate settings
-"=====================================================
-let g:snippets_dir='~/.vim/vim-snippets/snippets'
 
 "=====================================================
 "" Python settings
 "=====================================================
 
 " python executables for different plugins
-let g:pymode_python='python'
-let g:syntastic_python_python_exec='python'
+let g:pymode_python='python3'
+let g:syntastic_python_python_exec='python3'
 
-" rope
-let g:pymode_rope=0
-let g:pymode_rope_completion=0
-let g:pymode_rope_complete_on_dot=0
-let g:pymode_rope_auto_project=0
-let g:pymode_rope_enable_autoimport=0
-let g:pymode_rope_autoimport_generate=0
-let g:pymode_rope_guess_project=0
-
-" documentation
-let g:pymode_doc=0
-let g:pymode_doc_bind='K'
 
 " lints
-let g:pymode_lint=0
+let g:pymode_lint=1
 
 " virtualenv
 let g:pymode_virtualenv=1
@@ -355,7 +348,6 @@ let g:pymode_indent=1
 
 " code running
 let g:pymode_run=1
-let g:pymode_run_bind='<F5>'
 
 " syntastic
 "let g:syntastic_always_populate_loc_list=1
@@ -372,6 +364,7 @@ let g:pymode_run_bind='<F5>'
 "let g:SuperTabDefaultCompletionType = 'context'
 
 "ale
+let g:ale_completion_enabled=1
 let g:ale_linters_explicit = 1
 let g:ale_completion_delay = 500
 let g:ale_echo_delay = 20
@@ -379,12 +372,23 @@ let g:ale_lint_delay = 500
 let g:ale_echo_msg_format = '[%linter%] %code: %%s'
 let g:ale_lint_on_text_changed = 'normal'
 let g:ale_lint_on_insert_leave = 1
+let g:ale_lint_on_enter = 1
 let g:airline#extensions#ale#enabled = 1
 
-let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
-let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++11'
+let g:ale_linters = {'cpp': ['g++','cppcheck'],'c':['gcc','cppcheck'], 'python':['flake8','pylint']}
+let g:ale_fixers = {'python': ['autopep8', 'yapf']}
+
+
+
+let g:ale_c_gcc_options = '-Wall -Og -std=c99 -Wextra -Werror -fexceptions -Wno-long-long -Wno-variadic-macros'
+let g:ale_cpp_gcc_options = '-Wall -Og -std=c++17 -Wextra -Werror -fexceptions -Wno-long-long -Wno-variadic-macros'
 let g:ale_c_cppcheck_options = ''
 let g:ale_cpp_cppcheck_options = ''
+
+" Disable warnings about trailing whitespace for Python files.
+let g:ale_warn_about_trailing_whitespace = 0
+
+
 
 "autoformat
 noremap <F4> :Autoformat<CR>:w<CR>
@@ -393,22 +397,62 @@ noremap <F4> :Autoformat<CR>:w<CR>
 set completeopt-=preview
 
 let g:ycm_global_ycm_extra_conf='~/.vim/ycm_extra_conf.py'
-let g:ycm_min_num_of_chars_for_completion = 4
+"'~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
 let g:ycm_min_num_identifier_candidate_chars = 2
 let g:ycm_enable_diagnostic_highlighting = 0
-let g:ycm_server_log_level = 'info'
-let g:ycm_collect_identifiers_from_comments_and_strings = 1
-let g:ycm_complete_in_strings=1
+"let g:ycm_server_log_level = 'info'
 let g:ycm_key_invoke_completion = '<c-z>'
 let g:ycm_confirm_extra_conf=0
-
 set completeopt=menu,menuone
 let g:ycm_add_preview_to_completeopt = 0
 let g:ycm_show_diagnostics_ui = 0
+let g:ycm_seed_identifiers_with_syntax = 1
+" 开启 YCM 基于标签引擎
+let g:ycm_collect_identifiers_from_tags_files = 1
+" 从第2个键入字符就开始罗列匹配项
+let g:ycm_min_num_of_chars_for_completion=2
+" 在注释输入中也能补全
+let g:ycm_complete_in_comments = 1
+" 在字符串输入中也能补全
+let g:ycm_complete_in_strings = 1
+" 注释和字符串中的文字也会被收入补全
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_cache_omnifunc=0	" 禁止缓存匹配项,每次都重新生成匹配项
+let g:ycm_seed_identifiers_with_syntax=1	" 语法关键字补全
+let g:ycm_server_python_interpreter = '/usr/bin/python3'
+
+let g:ycm_always_populate_location_list = 1
+let g:ycm_echo_current_diagnostic = 1
+let g:ycm_goto_buffer_command = 'horizontal-split'
+
+
+autocmd InsertLeave * if pumvisible() == 0|pclose|endif	"离开插入模式后自动关闭预览窗口
+inoremap <expr> <CR>       pumvisible() ? "\<C-y>" : "\<CR>"	"回车即选中当前项
+"上下左右键的行为 会显示其他信息
+inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
+inoremap <expr> <Up>       pumvisible() ? "\<C-p>" : "\<Up>"
+inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<PageDown>"
+inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
+
+"let g:ycm_key_list_select_completion=['<c-n>']
+let g:ycm_key_list_select_completion = ['<Down>']
+"let g:ycm_key_list_previous_completion=['<c-p>']
+let g:ycm_key_list_previous_completion = ['<Up>']
+
 
 let g:ycm_semantic_triggers =  {
-			\ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
-			\ 'cs,lua,javascript': ['re!\w{2}'],
+  \   'c' : ['->', '.'],
+  \   'cpp' : ['->', '.', '::'],
+  \   'perl' : ['->'],
+  \   'php' : ['->', '::'],
+  \   'python,go' : ['.'],
+  \   'ruby' : ['.', '::'],
+  \   'lua' : ['.', ':'],
+  \   'erlang' : [':'],
+  \ }
+
+let g:ycm_semantic_triggers =  {
+			\ 'c,cpp,python,go,erlang': ['re!\w{2}'],
 			\ }
 
 nmap <leader>g :YcmCompleter GoTo<CR>
@@ -420,8 +464,33 @@ set t_Co=256
 set fillchars+=stl:\ ,stlnc:\
 set term=xterm-256color
 
+let python_highlight_all=1
+au Filetype python set tabstop=4
+au Filetype python set softtabstop=4
+au Filetype python set shiftwidth=4
+au Filetype python set textwidth=79
+au Filetype python set expandtab
+au Filetype python set autoindent
+au Filetype python set fileformat=unix
+autocmd Filetype python set foldmethod=indent
+autocmd Filetype python set foldlevel=99
 
-" :w!! 
-" write the file when you accidentally opened it without the right (root) privileges
-cmap w!! w !sudo tee % > /dev/null
+
+set path +=.,/usr/src/linux-headers-5.3.11-050311/include,/usr/include/x86_64-linux-gnu
+set path +=/usr/include,/usr/include/c++/9,/usr/local/include,/usr/include/x86_64-linux-gnu/c++/9
+
+"set statusline+=%#warningmsg#
+"set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%*
+
+"let g:syntastic_always_populate_loc_list = 1
+"let g:syntastic_auto_loc_list = 1
+"let g:syntastic_check_on_open = 1
+"let g:syntastic_check_on_wq = 0
+ 
+"let g:clang_snippets = 1
+"let g:clang_user_options = '-std=c++17'
+"let g:clang_snippets_engine = 'clang_complete'
+"let g:clang_library_path='/lib'
+"let g:clang_complete_configuration='~/.vim/.clang_complete'
 
