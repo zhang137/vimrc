@@ -55,6 +55,8 @@ flags = [
 '/usr/include/x86_64-linux-gnu',
 '-isystem',
 '/usr/include/x86_64-linux-gnu/c++/9',
+'-isystem',
+'/usr/src/linux-headers-5.3.11-050311/include',
 ]
 
 

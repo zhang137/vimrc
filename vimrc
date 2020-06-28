@@ -26,9 +26,7 @@ call vundle#begin()
     "-------------------=== Code/Project navigation ===-------------
     Plugin 'scrooloose/nerdtree'                " Project and file navigation
     Plugin 'majutsushi/tagbar'                  " Class/module browser
-    Plugin 'ctrlpvim/ctrlp.vim'                 " Fast transitions on project files
     Plugin 'Yggdroot/LeaderF'                   " instead ctrlp tagbar
-    Plugin 'tacahiroy/ctrlp-funky'              
     Plugin 'Chiel92/vim-autoformat'
     Plugin 'ludovicchabant/vim-gutentags'
     Plugin 'ervandew/supertab'                   
@@ -38,11 +36,11 @@ call vundle#begin()
     Plugin 'vim-airline/vim-airline-themes'     " Themes for airline
     Plugin 'powerline/powerline'                 " Powerline fonts plugin
     Plugin 'vimplugin/FixedTaskList'          " Pending tasks list
-    Plugin 'tpope/vim-surround'                 " Parentheses, brackets, quotes, XML tags, and more
     Plugin 'flazz/vim-colorschemes'             " Colorschemes
     
     "-------------------=== Languages support ===-------------------
     Plugin 'tpope/vim-commentary'               " Comment stuff out
+    Plugin 'tpope/vim-surround'
     Plugin 'Valloric/YouCompleteMe'             " Autocomplete plugin
 
     Plugin 'dense-analysis/ale'
@@ -50,7 +48,7 @@ call vundle#begin()
     
     "-------------------=== Python  ===-----------------------------
     Plugin 'python-mode/python-mode'
-    "Plugin 'xavierd/clang_complete'
+    Plugin 'fatih/vim-go'
 ""    Plugin 'Raimondi/delimitMate'
 "    Plugin 'rust-lang/rust.vim' "rust
 
@@ -74,7 +72,7 @@ colorscheme wombat256                    " set color scheme
 set number                                  " show line numbers
 set ruler
 set ttyfast                                 " terminal acceleration
-"set mouse=a
+set mouse=a
 set tabstop=4                               " 4 whitespaces for tabs visual presentation
 set shiftwidth=4                            " shift lines by 4 spaces
 set smarttab                                " set tabs for a shifttabs logic
@@ -118,65 +116,6 @@ nmap <silent> <leader>q :SyntasticCheck # <CR> :bp <BAR> bd #<CR>
 "=====================================================
 set incsearch	                            " incremental search
 set hlsearch	                            " highlight search results
-""====================================================
-""curlp settings
-"=====================================================
-"Press <F5> to purge the cache for the current directory to get new files, remove deleted files and apply new ignore options.
-"Press <c-f> and <c-b> to cycle between modes.
-"Press <c-d> to switch to filename only search instead of full path.
-"Press <c-r> to switch to regexp mode.
-"Use <c-j>, <c-k> or the arrow keys to navigate the result list.
-"Use <c-t> or <c-v>, <c-x> to open the selected entry in a new tab or in a new split.
-"Use <c-n>, <c-p> to select the next/previous string in the prompt's history.
-"Use <c-y> to create a new file and its parent directories.
-"Use <c-z> to mark/unmark multiple files and <c-o> to open them.
-
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlP'
-"=====================================================
-"'c' - the directory of tctrl + j/k 进行上下选择
-
-"ctrl + x 在当前窗口水平分屏打开文件
-"ctrl + v 同上, 垂直分屏
-"ctrl + t 在tab中打开he current file.
-
-"'a' - the directory of the current file, unless it is a subdirectory of the cwd
-"'r' - the nearest ancestor of the current file that contains one of these directories or files: .git .hg .svn .bzr _darcs
-"'w' - modifier to "r": start search from the cwd instead of the current file's directory
-"0 or '' (empty string) - disable this feature.
-"=====================================================
-let g:ctrlp_working_path_mode = 'ra'
-set runtimepath^=~/.vim/bundle/ctrlp.vim
-let g:ctrlp_cache_dir = $HOME.'/.cache/ctrlp'
-let g:ctrlp_open_multiple_files = 'ij'
-let g:ctrlp_extensions = ['tag', 'buffertag', 'quickfix', 'dir', 'rtscript', 'undo', 'line', 'changes', 'mixed', 'bookmarkdir']
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
-set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
-let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
-  \ 'file': '\v\.(exe|so|dll)$',
-  \ 'link': 'some_bad_symbolic_links',
-  \ }
-"Use a custom file listing command:
-let g:ctrlp_user_command = 'find %s -type f'        " MacOSX/Linux
-let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'  " Windows
-"Ignore files in .gitignore
-let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
-
-let g:ctrlp_working_path_mode=0
-let g:ctrlp_match_window_bottom=1
-let g:ctrlp_max_height=15
-let g:ctrlp_match_window_reversed=0
-let g:ctrlp_mruf_max=500
-let g:ctrlp_follow_symlinks=1
-
-nnoremap <Leader>fu :CtrlPFunky<Cr>
-" narrow the list down with a word under cursor
-nnoremap <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<Cr>
-let g:ctrlp_funky_syntax_highlight = 1
-
-let g:ctrlp_extensions = ['funky']
 
 "=====================================================
 "" AirLine settings
@@ -189,15 +128,15 @@ let g:airline_powerline_fonts=1
 "=====================================================
 "" TagBar settings
 "=====================================================
-nmap <F6> :TagbarToggle<CR>
+nmap <F2> :TagbarToggle<CR>
 
 let g:tagbar_autofocus=0
 ""设置tagbar使用的ctags的插件,必须要设置对  
 let g:tagbar_ctags_bin='/usr/bin/ctags'  
 "设置tagbar的窗口宽度  
 let g:tagbar_width=25
-let g:tagbar_right=1
-"let g:tagbar_autoclose=1
+let g:tagbar_left=1
+let g:tagbar_autoclose=1
 
 "autocmd BufEnter *.py :call tagbar#autoopen(0)
 "autocmd BufWinLeave *.py :TagbarClose
@@ -334,10 +273,10 @@ let g:pymode_syntax_docstrings=g:pymode_syntax_all
 " highlight 'long' lines (>= 80 symbols) in python files
 augroup vimrc_autocmds
     autocmd!
-    autocmd FileType python,rst,c,cpp highlight Excess ctermbg=DarkGrey guibg=Black
-    autocmd FileType python,rst,c,cpp match Excess /\%81v.*/
-    autocmd FileType python,rst,c,cpp set nowrap
-    autocmd FileType python,rst,c,cpp set colorcolumn=80
+    autocmd FileType python,go,rst,c,cpp highlight Excess ctermbg=DarkGrey guibg=Black
+    autocmd FileType python,go,rst,c,cpp match Excess /\%81v.*/
+    autocmd FileType python,go,rst,c,cpp set nowrap
+    autocmd FileType python,go,rst,c,cpp set colorcolumn=80
 augroup END
 
 " code folding
@@ -348,20 +287,6 @@ let g:pymode_indent=1
 
 " code running
 let g:pymode_run=1
-
-" syntastic
-"let g:syntastic_always_populate_loc_list=1
-"let g:syntastic_auto_loc_list=1
-"let g:syntastic_enable_signs=1
-"let g:syntastic_check_on_wq=0
-"let g:syntastic_aggregate_errors=1
-"let g:syntastic_loc_list_height=5
-"let g:syntastic_error_symbol='X'
-"let g:syntastic_style_error_symbol='X'
-"let g:syntastic_warning_symbol='x'
-"let g:syntastic_style_warning_symbol='x'
-"let g:syntastic_python_checkers=['flake8', 'pydocstyle', 'python']
-"let g:SuperTabDefaultCompletionType = 'context'
 
 "ale
 let g:ale_completion_enabled=1
@@ -375,15 +300,20 @@ let g:ale_lint_on_insert_leave = 1
 let g:ale_lint_on_enter = 1
 let g:airline#extensions#ale#enabled = 1
 
-let g:ale_linters = {'cpp': ['g++','cppcheck'],'c':['gcc','cppcheck'], 'python':['flake8','pylint']}
+let g:ale_linters = {'cpp': ['g++','cppcheck'],'c':['gcc','cppcheck'], 'python':['flake8','pylint'], 'go':['golint', 'go vet']}
 let g:ale_fixers = {'python': ['autopep8', 'yapf']}
 
+let g:ale_c_gcc_options = '-Wall -std=c17 -Og -Wextra -Wno-long-long -Wno-variadic-macros -Werror -fexceptions'
+
+"let g:ale_c_gcc_options = '-Wall -std=c99 -Og -Wextra -Werror -fexceptions -Wno-long-long -Wno-variadic-macros -I/usr/src/linux-headers-5.3.10-050310/include'
 
 
-let g:ale_c_gcc_options = '-Wall -Og -std=c99 -Wextra -Werror -fexceptions -Wno-long-long -Wno-variadic-macros'
 let g:ale_cpp_gcc_options = '-Wall -Og -std=c++17 -Wextra -Werror -fexceptions -Wno-long-long -Wno-variadic-macros'
+
 let g:ale_c_cppcheck_options = ''
+
 let g:ale_cpp_cppcheck_options = ''
+
 
 " Disable warnings about trailing whitespace for Python files.
 let g:ale_warn_about_trailing_whitespace = 0
@@ -396,6 +326,7 @@ noremap <F4> :Autoformat<CR>:w<CR>
 " YouCompleteMe
 set completeopt-=preview
 
+let g:ycm_use_clangd = 0
 let g:ycm_global_ycm_extra_conf='~/.vim/ycm_extra_conf.py'
 "'~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
 let g:ycm_min_num_identifier_candidate_chars = 2
@@ -426,6 +357,7 @@ let g:ycm_echo_current_diagnostic = 1
 let g:ycm_goto_buffer_command = 'horizontal-split'
 
 
+
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif	"离开插入模式后自动关闭预览窗口
 inoremap <expr> <CR>       pumvisible() ? "\<C-y>" : "\<CR>"	"回车即选中当前项
 "上下左右键的行为 会显示其他信息
@@ -443,16 +375,11 @@ let g:ycm_key_list_previous_completion = ['<Up>']
 let g:ycm_semantic_triggers =  {
   \   'c' : ['->', '.'],
   \   'cpp' : ['->', '.', '::'],
-  \   'perl' : ['->'],
-  \   'php' : ['->', '::'],
   \   'python,go' : ['.'],
-  \   'ruby' : ['.', '::'],
-  \   'lua' : ['.', ':'],
-  \   'erlang' : [':'],
   \ }
 
 let g:ycm_semantic_triggers =  {
-			\ 'c,cpp,python,go,erlang': ['re!\w{2}'],
+			\ 'c,cpp,python,go': ['re!\w{2}'],
 			\ }
 
 nmap <leader>g :YcmCompleter GoTo<CR>
@@ -476,8 +403,10 @@ autocmd Filetype python set foldmethod=indent
 autocmd Filetype python set foldlevel=99
 
 
-set path +=.,/usr/src/linux-headers-5.3.11-050311/include,/usr/include/x86_64-linux-gnu
+set path +=.,/usr/src/linux-headers-5.3.10-050310/include,/usr/include/x86_64-linux-gnu
 set path +=/usr/include,/usr/include/c++/9,/usr/local/include,/usr/include/x86_64-linux-gnu/c++/9
+
+
 
 "set statusline+=%#warningmsg#
 "set statusline+=%{SyntasticStatuslineFlag()}
@@ -493,4 +422,23 @@ set path +=/usr/include,/usr/include/c++/9,/usr/local/include,/usr/include/x86_6
 "let g:clang_snippets_engine = 'clang_complete'
 "let g:clang_library_path='/lib'
 "let g:clang_complete_configuration='~/.vim/.clang_complete'
+
+"========================vim-go============================
+let g:go_fmt_command = "goimports" " 格式化将默认的 gofmt 替换
+let g:go_def_mode = 'gopls'
+let g:go_autodetect_gopath = 1
+let g:go_list_type = "quickfix"
+
+let g:go_version_warning = 1
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_generate_tags = 1
+
+let g:godef_split=2
+
 
